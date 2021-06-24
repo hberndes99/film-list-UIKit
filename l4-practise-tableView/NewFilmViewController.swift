@@ -7,11 +7,16 @@
 
 import UIKit
 
+protocol NewFilmViewControllerDelegate {
+    func addFilmToList(film: Film)
+}
+
 class NewFilmViewController: UIViewController {
     
     var titleInputLabel: UITextField!
+    var releaseDateInputField: UITextField!
     var submitButton: UIButton!
-    var isDismissed: (() -> Void)?
+    var addFilmDelegate: NewFilmViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +27,12 @@ class NewFilmViewController: UIViewController {
         titleInputLabel.placeholder = "Enter the film title"
         
         view.addSubview(titleInputLabel)
+        
+        releaseDateInputField = UITextField()
+        releaseDateInputField.translatesAutoresizingMaskIntoConstraints = false
+        releaseDateInputField.placeholder = "Enter year of release"
+        
+        view.addSubview(releaseDateInputField)
         
         submitButton = UIButton()
         submitButton.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +52,11 @@ class NewFilmViewController: UIViewController {
         ])
         NSLayoutConstraint.activate([
             submitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            submitButton.centerYAnchor.constraint(equalTo: titleInputLabel.bottomAnchor, constant: 40)
+            submitButton.centerYAnchor.constraint(equalTo: titleInputLabel.bottomAnchor, constant: 70)
+        ])
+        NSLayoutConstraint.activate([
+            releaseDateInputField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            releaseDateInputField.centerYAnchor.constraint(equalTo: titleInputLabel.centerYAnchor, constant: 30)
         ])
     }
     
@@ -49,13 +64,20 @@ class NewFilmViewController: UIViewController {
         print("add this film pls")
         
         let newTitle = titleInputLabel.text
-        if let newTitle = newTitle {
+        if let newTitle = newTitle, newTitle != "", releaseDateInputField.text != "" {
             let newFilm = Film(title: newTitle, releaseDate: 2000, rating: .good)
-            films.append(newFilm)
-            self.isDismissed?()
+            //films.append(newFilm)
+            //self.isDismissed?()
+            addFilmDelegate?.addFilmToList(film: newFilm)
             dismiss(animated: true)
             
+        } else {
+            print("emptyu")
         }
+    }
+    
+    deinit {
+        print("new film view controller gone")
     }
 
     /*
