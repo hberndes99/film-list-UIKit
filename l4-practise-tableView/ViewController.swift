@@ -7,22 +7,20 @@
 
 import UIKit
 
-var films = [
-    Film(title: "The Parent Trap", releaseDate: 1998, rating: .great),
-    Film(title: "Wild Child", releaseDate: 2008, rating: .great),
-    Film(title: "Twilight", releaseDate: 2008, rating: .average),
-    Film(title: "Clueless", releaseDate: 1995, rating: .good),
-    Film(title: "Easy A", releaseDate: 2010, rating: .great),
-    Film(title: "La la land", releaseDate: 2016, rating: .good)
-]
-
 class ViewController: UIViewController {
+    
+    var films = [
+        Film(title: "The Parent Trap", releaseDate: 1998, rating: .great),
+        Film(title: "Wild Child", releaseDate: 2008, rating: .great),
+        Film(title: "Twilight", releaseDate: 2008, rating: .average),
+        Film(title: "Clueless", releaseDate: 1995, rating: .good),
+        Film(title: "Easy A", releaseDate: 2010, rating: .great),
+        Film(title: "La la land", releaseDate: 2016, rating: .good)
+    ]
     
     var tableView: UITableView!
     var cellHeight: CGFloat = 55
     
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -30,7 +28,6 @@ class ViewController: UIViewController {
         title = "Film List"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addTapped))
         
-        // table view
         tableView = UITableView(frame: self.view.bounds, style: UITableView.Style.plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -41,10 +38,8 @@ class ViewController: UIViewController {
     
     @objc func addTapped() {
         let newFilmViewController = NewFilmViewController()
+        newFilmViewController.addFilmDelegate = self
         present(newFilmViewController, animated: true)
-        newFilmViewController.isDismissed = {
-            self.tableView.reloadData()
-        }
     }
 }
 
@@ -59,9 +54,8 @@ extension ViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         return cell
     }
-    
-    
 }
+
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return cellHeight
@@ -85,10 +79,18 @@ extension ViewController: UITableViewDelegate {
     
     func deleteFilm (at: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: "Delete") {(action, view, completion) in
-            films.remove(at: at.row)
+            self.films.remove(at: at.row)
             self.tableView.reloadData()
             completion(true)
         }
         return action
+    }
+}
+
+
+extension ViewController: NewFilmViewControllerDelegate {
+    func addFilmToList(film: Film) {
+        films.append(film)
+        tableView.reloadData()
     }
 }
