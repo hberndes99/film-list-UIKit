@@ -7,16 +7,16 @@
 
 import UIKit
 
-protocol NewFilmViewControllerDelegate {
+protocol NewFilmViewControllerDelegate: AnyObject {
     func addFilmToList(film: Film)
 }
 
 class NewFilmViewController: UIViewController {
     
-    var titleInputLabel: UITextField!
-    var releaseDateInputField: UITextField!
-    var submitButton: UIButton!
-    var addFilmDelegate: NewFilmViewControllerDelegate?
+    private var titleInputLabel: UITextField!
+    private var releaseDateInputField: UITextField!
+    private var submitButton: UIButton!
+    weak var addFilmDelegate: NewFilmViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,12 +64,18 @@ class NewFilmViewController: UIViewController {
         print("add this film pls")
         
         let newTitle = titleInputLabel.text
-        if let newTitle = newTitle, newTitle != "", releaseDateInputField.text != "" {
-            let newFilm = Film(title: newTitle, releaseDate: 2000, rating: .good)
-            //films.append(newFilm)
-            //self.isDismissed?()
-            addFilmDelegate?.addFilmToList(film: newFilm)
-            dismiss(animated: true)
+        let newReleaseDate = Int(releaseDateInputField.text!)
+        
+        if let newTitle = newTitle, newTitle != "" {
+            if let newReleaseDate = newReleaseDate {
+                let newFilm = Film(title: newTitle, releaseDate: newReleaseDate, rating: .good)
+                //films.append(newFilm)
+                //self.isDismissed?()
+                addFilmDelegate?.addFilmToList(film: newFilm)
+                dismiss(animated: true)
+            } else {
+                print("no date entered")
+            }
             
         } else {
             print("emptyu")
